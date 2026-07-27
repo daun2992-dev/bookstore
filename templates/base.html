@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Магазин{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- ============================================================ -->
+    <!-- НАВИГАЦИЯ -->
+    <!-- ============================================================ -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <!-- Логотип -->
+            <a class="navbar-brand" href="{% url 'shop:product_list' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Логотип" height="40" class="d-inline-block align-top" style="background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'shop:product_list' %}">🏠 Главная</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
+                            Категории
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for category in categories %}
+                                <li><a class="dropdown-item" href="{% url 'shop:category_detail' category.slug %}">{{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'shop:search' %}">Поиск</a>
+                    </li>
+
+                    <!-- ============================================================ -->
+                    <!-- 🚀 ДОБАВЛЯЕМ ПУНКТ "СОЗДАТЬ КНИГУ" -->
+                    <!-- ============================================================ -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'shop:product_create' %}">➕ Создать книгу</a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:profile' %}">
+                                👤 Профиль
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'orders:history' %}">Заказы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart:detail' %}">
+                                🛒 Корзина (<span class="cart-count">{{ cart_total_items|default:0 }}</span>)
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'shop:favorite_list' %}">
+                                ❤️ Избранное (<span class="favorites-count">{{ user.favorites.count|default:0 }}</span>)
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_logout' %}">Выйти</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_login' %}">Войти</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'account_signup' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================ -->
+    <!-- КОНТЕНТ -->
+    <!-- ============================================================ -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- BOOTSTRAP JS -->
+    <!-- ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ============================================================ -->
+    <!-- AJAX-МАГИЯ (корзина + избранное) -->
+    <!-- ============================================================ -->
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        function showNotification(message, type = 'success') {
+            const alertClass = type === 'success' ? 'alert-success' :
+                              type === 'error' ? 'alert-danger' :
+                              type === 'warning' ? 'alert-warning' : 'alert-info';
+
+            const notification = document.createElement('div');
+            notification.className = `alert ${alertClass} position-fixed top-0 end-0 m-3`;
+            notification.style.zIndex = '9999';
+            notification.style.minWidth = '250px';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transition = 'opacity 0.3s';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function updateCartCount() {
+            const countElement = document.querySelector('.cart-count');
+            if (!countElement) return;
+
+            fetch('{% url "cart:api_count" %}', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                countElement.textContent = data.total_items;
+            })
+            .catch(error => console.error('Ошибка обновления корзины:', error));
+        }
+
+        function updateFavoritesCount() {
+            const countElement = document.querySelector('.favorites-count');
+            if (!countElement) return;
+
+            fetch('{% url "shop:api_favorites_count" %}', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                countElement.textContent = data.total_favorites;
+            })
+            .catch(error => console.error('Ошибка обновления избранного:', error));
+        }
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.add-to-cart-btn');
+            if (!btn) return;
+
+            e.preventDefault();
+
+            const url = btn.dataset.url;
+            const quantityInput = document.querySelector('input[name="quantity"]');
+            const quantity = quantityInput ? quantityInput.value : 1;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `quantity=${quantity}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const countElement = document.querySelector('.cart-count');
+                    if (countElement) countElement.textContent = data.total_items;
+                    showNotification(data.message, 'success');
+                } else {
+                    showNotification('Ошибка при добавлении', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка сервера', 'error');
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.favorite-btn');
+            if (!btn) return;
+
+            e.preventDefault();
+
+            const url = btn.dataset.url;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const favCount = document.querySelector('.favorites-count');
+                    if (favCount) favCount.textContent = data.total_favorites;
+
+                    if (data.is_favorite) {
+                        btn.innerHTML = '❤️ В избранном';
+                        btn.classList.remove('btn-outline-danger');
+                        btn.classList.add('btn-danger');
+                    } else {
+                        btn.innerHTML = '🤍 В избранное';
+                        btn.classList.remove('btn-danger');
+                        btn.classList.add('btn-outline-danger');
+                    }
+
+                    showNotification(data.message, 'success');
+                } else {
+                    showNotification('Ошибка', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка сервера', 'error');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            updateFavoritesCount();
+        });
+        setInterval(updateCartCount, 30000);
+        setInterval(updateFavoritesCount, 30000);
+    </script>
+
+</body>
+</html>
