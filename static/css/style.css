@@ -1,0 +1,363 @@
+/* ============================================================
+   ОБЩИЕ СТИЛИ
+   ============================================================ */
+body {
+    background: #faf6f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* ============================================================
+   НАВИГАЦИЯ (тёплая, без чёрного фона)
+   ============================================================ */
+.navbar {
+    background: linear-gradient(135deg, #f5e6d3 0%, #e8d5c4 100%) !important;
+    box-shadow: 0 4px 20px rgba(139, 109, 81, 0.15);
+    padding: 12px 0;
+    border-bottom: 2px solid #dcc4b0;
+}
+
+.navbar-brand {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #5a3e2b !important;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.02);
+}
+
+.navbar-brand img {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    transition: filter 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.navbar .nav-link {
+    color: #5a3e2b !important;
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.navbar .nav-link:hover {
+    background: rgba(90, 62, 43, 0.08);
+    color: #3d2a1c !important;
+    transform: translateY(-1px);
+}
+
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: #8b6d51;
+    transition: width 0.3s ease;
+}
+
+.navbar .nav-link:hover::after {
+    width: 60%;
+}
+
+/* Выпадающее меню категорий */
+.dropdown-menu {
+    background: #fffbf7;
+    border: 1px solid #dcc4b0;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(90, 62, 43, 0.12);
+    padding: 8px;
+    animation: fadeInDown 0.3s ease;
+}
+
+.dropdown-item {
+    color: #5a3e2b !important;
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: #f5e6d3;
+    color: #3d2a1c !important;
+    transform: translateX(4px);
+}
+
+/* ============================================================
+   КАРТОЧКИ ТОВАРОВ
+   ============================================================ */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(90, 62, 43, 0.08);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.01);
+    box-shadow: 0 12px 40px rgba(90, 62, 43, 0.15);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 20px;
+    background: #ffffff;
+}
+
+.card-title {
+    color: #3d2a1c;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.card-text .fw-bold {
+    color: #8b6d51;
+    font-size: 1.2rem;
+}
+
+.card .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.card .btn-success {
+    background: #8b6d51;
+    border: none;
+    color: #fff;
+}
+
+.card .btn-success:hover {
+    background: #6d543e;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(139, 109, 81, 0.3);
+}
+
+.card .btn-primary {
+    background: #b89a82;
+    border: none;
+    color: #fff;
+}
+
+.card .btn-primary:hover {
+    background: #a5836a;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(184, 154, 130, 0.3);
+}
+
+.card .btn-outline-primary {
+    border-color: #b89a82;
+    color: #8b6d51;
+}
+
+.card .btn-outline-primary:hover {
+    background: #b89a82;
+    color: #fff;
+    transform: scale(1.02);
+}
+
+/* ============================================================
+   ФИЛЬТРЫ (боковая панель)
+   ============================================================ */
+.card-header {
+    background: linear-gradient(135deg, #f5e6d3, #e8d5c4) !important;
+    border: none;
+    border-radius: 16px 16px 0 0 !important;
+    padding: 16px 20px;
+}
+
+.card-header h5 {
+    color: #3d2a1c;
+    font-weight: 600;
+    margin: 0;
+}
+
+#filter-form .card {
+    border: 1px solid #e8ddd0;
+    border-radius: 16px;
+    background: #fffbf7;
+}
+
+#filter-form .form-check-label {
+    color: #5a3e2b;
+    cursor: pointer;
+}
+
+#filter-form .form-check-input:checked {
+    background-color: #8b6d51;
+    border-color: #8b6d51;
+}
+
+#filter-form .form-control,
+#filter-form .form-select {
+    border: 1px solid #dcc4b0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #3d2a1c;
+}
+
+#filter-form .form-control:focus,
+#filter-form .form-select:focus {
+    border-color: #8b6d51;
+    box-shadow: 0 0 0 3px rgba(139, 109, 81, 0.15);
+}
+
+#filter-form .btn-primary {
+    background: #8b6d51;
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+#filter-form .btn-primary:hover {
+    background: #6d543e;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(139, 109, 81, 0.3);
+}
+
+#filter-form .btn-outline-secondary {
+    border-color: #dcc4b0;
+    color: #5a3e2b;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+#filter-form .btn-outline-secondary:hover {
+    background: #f5e6d3;
+    border-color: #b89a82;
+}
+
+/* ============================================================
+   АНИМАЦИИ
+   ============================================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.10s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.20s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.30s; }
+.card:nth-child(7) { animation-delay: 0.35s; }
+.card:nth-child(8) { animation-delay: 0.40s; }
+.card:nth-child(9) { animation-delay: 0.45s; }
+.card:nth-child(10) { animation-delay: 0.50s; }
+.card:nth-child(11) { animation-delay: 0.55s; }
+.card:nth-child(12) { animation-delay: 0.60s; }
+
+/* ============================================================
+   КНОПКИ
+   ============================================================ */
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-success {
+    background: #8b6d51;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #6d543e;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(139, 109, 81, 0.3);
+}
+
+.btn-danger {
+    background: #c0392b;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #a93226;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+}
+
+/* ============================================================
+   ПАГИНАЦИЯ
+   ============================================================ */
+.pagination .page-link {
+    color: #5a3e2b;
+    border: 1px solid #dcc4b0;
+    border-radius: 8px;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background: #f5e6d3;
+    border-color: #b89a82;
+    transform: scale(1.05);
+}
+
+.pagination .page-item.active .page-link {
+    background: #8b6d51;
+    border-color: #8b6d51;
+    color: #fff;
+}
+
+/* ============================================================
+   АДАПТИВНОСТЬ
+   ============================================================ */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-img-top {
+        height: 150px;
+    }
+}
