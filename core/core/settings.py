@@ -111,6 +111,7 @@ USE_TZ = True
 # Статика и медиа — теперь в книжный-магазин/static и книжный-магазин/media
 # ------------------------------------------------------------
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
